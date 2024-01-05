@@ -1,0 +1,683 @@
+{
+  "name": "Single Tenant Architecture Exploration  (Boundary Services)",
+  "description": null,
+  "permissions": "PUBLIC_READ_WRITE",
+  "pages": [
+    {
+      "name": "Single Tenant Architecture Exploration",
+      "description": null,
+      "widgets": [
+        {
+          "title": "Calls from the UI - boundary service apps",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 4,
+            "height": 5
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "FROM Transaction SELECT count(*) \nWHERE (appName LIKE {{tenant}} and (appName like 'ml%' or appName like 'tm%' or appName like 'we%')) \n       and (request.uri IN ('/graphql', '/macropoint/location-updates', '/macropoint/order-status', '/macropoint/schedule-alerts', '/macropoint/trip-events') OR (name LIKE '%WebFramework%'))\n       and transactionType = 'Web'\n       and request.uri NOT LIKE '/health%' and request.uri NOT LIKE '/readiness' and request.uri NOT LIKE '/liveness'\nFACET appName \nLIMIT MAX SINCE 1 day ago"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "graphql / macropoint / schedule calls",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 4,
+            "height": 5
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "FROM Transaction SELECT count(*) \nWHERE (appName LIKE {{tenant}} and (appName like 'ml%' or appName like 'tm%' or appName like 'we%')) \n       and request.uri IN ('/graphql', '/macropoint/location-updates', '/macropoint/order-status', '/macropoint/schedule-alerts', '/macropoint/trip-events') \n       and transactionType = 'Web'\nFACET appName, name, request.uri, parent.app\nLIMIT MAX SINCE 1 day ago"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "Calls from the UI with WebFramwork in the name",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 4,
+            "height": 5
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "FROM Transaction SELECT count(*) WHERE (appName LIKE {{tenant}} and (appName like 'ml%' or appName like 'tm%' or appName like 'we%')) and name LIKE '%WebTransaction/WebFrameworkUri%'\nFACET appName, name, request.uri, parent.app\nLIMIT MAX SINCE 1 day ago"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "Ingest App",
+          "layout": {
+            "column": 1,
+            "row": 6,
+            "width": 6,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "FROM Transaction select count(*) WHERE appName LIKE {{tenant}} and name LIKE '%ingest%' FACET appName, name SINCE 1 day ago"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "Import and Ingest apps",
+          "layout": {
+            "column": 7,
+            "row": 6,
+            "width": 6,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.table"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "FROM Transaction SELECT count(*) WHERE appName LIKE {{tenant}} AND (name LIKE '%ingest%' OR name LIKE '%import%') SINCE 6 hours ago FACET appName, name"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Boundary app cross tenant baselines",
+      "description": null,
+      "widgets": [
+        {
+          "title": "3pi-tracking-fourkites",
+          "layout": {
+            "column": 1,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-3pi-tracking-fourkites' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "clientexceptions",
+          "layout": {
+            "column": 3,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-clientexceptions' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "driver-microservices",
+          "layout": {
+            "column": 5,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-driver-microservices' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "incidents",
+          "layout": {
+            "column": 7,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-incidents' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "linkedroutes",
+          "layout": {
+            "column": 9,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-linkedroutes' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "macropoint",
+          "layout": {
+            "column": 11,
+            "row": 1,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-macropoint' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "power-microservices",
+          "layout": {
+            "column": 1,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-power-microservices' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "saved-filters",
+          "layout": {
+            "column": 3,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-saved-filters' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "seer",
+          "layout": {
+            "column": 5,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-seer' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "service-tolerance",
+          "layout": {
+            "column": 7,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-service-tolerance' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "stopevents",
+          "layout": {
+            "column": 9,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-stopevents' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "tasks",
+          "layout": {
+            "column": 11,
+            "row": 3,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-tasks' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "timelineevents",
+          "layout": {
+            "column": 1,
+            "row": 5,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-timelineevents' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "tracking",
+          "layout": {
+            "column": 3,
+            "row": 5,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-tracking' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "trackingeta (.NET)",
+          "layout": {
+            "column": 5,
+            "row": 5,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-trackingeta (.NET)' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "trailer-microservices",
+          "layout": {
+            "column": 7,
+            "row": 5,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-trailer-microservices' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        },
+        {
+          "title": "trucker-tools",
+          "layout": {
+            "column": 9,
+            "row": 5,
+            "width": 2,
+            "height": 2
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.billboard"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "nrqlQueries": [
+              {
+                "accountIds": [
+                  2452316
+                ],
+                "query": "SELECT max(percentileSegment) AS TargetSLO_95 FROM (FROM Transaction SELECT percentile(duration, 95) AS percentileSegment WHERE error = false AND transactionType = 'Web' AND appName LIKE '%prod-truckertools' AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness' FACET hourOf(timestamp) ) SINCE 2 weeks ago "
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "tenant",
+      "items": null,
+      "defaultValues": [
+        {
+          "value": {
+            "string": "%ml100-prod%"
+          }
+        }
+      ],
+      "nrqlQuery": {
+        "accountIds": [
+          2452316
+        ],
+        "query": "FROM Transaction SELECT uniques(concat('\\%',capture(appName,  r'(?P<domain>([[:alnum:]]+)*).*'), '-prod\\%'))\nWHERE (appName LIKE '%-prod-%')\nSINCE 1 hour ago"
+      },
+      "options": {
+        "ignoreTimeRange": true
+      },
+      "title": "Tenant",
+      "type": "NRQL",
+      "isMultiSelection": false,
+      "replacementStrategy": "STRING"
+    }
+  ]
+}
