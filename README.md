@@ -2,6 +2,7 @@
 Service level automation terraform and dashboard for Mastery
 
 This repository contains the following: 
+
 An export of the dashboard we set up in Mastery's account. 
 Using the tenant filter, a user can see the boundary services. 
 On the second tab they can see the 95th percentile response time of boundary services across multiple tenants. The baseline is calculated using:
