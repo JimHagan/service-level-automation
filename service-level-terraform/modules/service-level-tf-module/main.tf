@@ -47,7 +47,7 @@ data "newrelic_entity" "targetApp" {
 # Create service levels
 resource "newrelic_service_level" "latencyServiceLevel" {
     guid = data.newrelic_entity.targetApp.guid
-    name = join(local.app_name,[" transactions < ", var.m_app_latency]) 
+    name = "${local.app_name} duration < ${var.m_app_latency}"
     description = "Proportion of requests that are served faster than a threshold."
 
     events {
@@ -76,7 +76,7 @@ resource "newrelic_service_level" "latencyServiceLevel" {
 # Success rate service level
 resource "newrelic_service_level" "successServiceLevel" {
     guid = data.newrelic_entity.targetApp.guid
-    name = join(local.app_name,[" success rate"])
+    name = "${local.app_name} success rate"
     description = "Proportion of requests that are served without errors."
 
     events {
