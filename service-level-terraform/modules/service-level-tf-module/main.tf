@@ -35,7 +35,7 @@ provider "newrelic" {
 */
 
 locals {
-    app_name = "${var.m_tenant}-prod-{$var.m_app_string}"
+    app_name = "${var.m_tenant}-prod-${var.m_app_string}"
 }
 
 data "newrelic_entity" "targetApp" {
