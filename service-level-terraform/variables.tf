@@ -19,7 +19,7 @@ variable "nr_api_key" {
 variable "nr_account_id" {
     description = "NR account id"
     type = number
-    default = 0
+    default = 0 
 } 
 
 #
@@ -100,5 +100,5 @@ variable "team_names" {
 variable "tenant" {
     description = "Tenant to create service levels for. Example: ml100"
     type = string
-    default = "m100"
+    default = "ml100"
 }
