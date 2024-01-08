@@ -14,12 +14,25 @@
 # Test out on TechOps - does it work?
 #
 
+terraform {
+  # Require Terraform version 1.0 (recommended)
+  required_version = "~> 1.0"
+
+  # Require the latest 2.x version of the New Relic provider
+  required_providers {
+    newrelic = {
+      source  = "newrelic/newrelic"
+    }
+  }
+}
+
 /*
 provider "newrelic" {
   account_id = var.m_nr_account_id 
   api_key = var.m_nr_api_key 
   region = "US"        # US or EU (defaults to US)
-}*/
+}
+*/
 
 locals {
     app_name = "${var.m_tenant}-prod-{$var.m_app_string}"
@@ -34,7 +47,7 @@ data "newrelic_entity" "targetApp" {
 # Create service levels
 resource "newrelic_service_level" "latencyServiceLevel" {
     guid = data.newrelic_entity.targetApp.guid
-    name = join(var.m_app_name," transactions < ", var.m_app_latency) 
+    name = join(local.app_name,[" transactions < ", var.m_app_latency]) 
     description = "Proportion of requests that are served faster than a threshold."
 
     events {
@@ -63,7 +76,7 @@ resource "newrelic_service_level" "latencyServiceLevel" {
 # Success rate service level
 resource "newrelic_service_level" "successServiceLevel" {
     guid = data.newrelic_entity.targetApp.guid
-    name = join(local.app_name," success rate")
+    name = join(local.app_name,[" success rate"])
     description = "Proportion of requests that are served without errors."
 
     events {
@@ -105,12 +118,12 @@ resource "newrelic_entity_tags" "latencyServiceLevelTags" {
 
    tag { 
        key = "customer"
-       values = [var.m_tenant_name]
+       values = [var.m_tenant]
    }
 
    tag {
        key = "team"
-       values = [var.m_team_name]
+       values = var.m_team_names
    }
 } 
 
@@ -130,12 +143,12 @@ resource "newrelic_entity_tags" "successServiceLevelTags" {
 
    tag { 
        key = "customer"
-       values = [var.m_tenant_name]
+       values = [var.m_tenant]
    }
 
    tag {
        key = "team"
-       values = [var.m_team_name]
+       values = var.m_team_names
    }
 } 
 
