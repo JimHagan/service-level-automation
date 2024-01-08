@@ -31,60 +31,6 @@ variable "service_level_filter" {
     default = "AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness'"
 }
 
-#
-# List of services comes from this dashboard: https://onenr.io/0VjYqNebvj0
-# Make sure to filter for the intended client
-#
-variable "target_services" {
-    type = list(string) 
-    default = [
-    "3pi-tracking-fourkites", 
-    "clientexceptions",
-    "driver-microservices",
-    "incidents",
-    "linkedroutes",
-    "macropoint",
-    "power-microservices", 
-    "saved-filters",
-    "seer",
-    "service-tolerance",
-    "stopevents",
-    "tasks",
-    "timelineevents",
-    "tracking",
-    "trackingeta (.NET)",
-    "trailer-microservices", 
-    "trucker-tools"]
-}
-
-
-# 
-# Target SLO values come from https://onenr.io/0oQDz8G84Ry
-# Make sure to put them in the same order as the services up above
-#
-# Probably need to turn this into a map ..
-variable "target_latency_slos" {
-     type = list(number)
-     default = [ 
-     0.561,
-     0.00192,
-     0.461,
-     0.148,
-     0.523,
-     1.531,
-     0.461,
-     0.0645,
-     0.0518,
-     0.00745,
-     0.516,
-     0.00192,
-     0.516,
-     0.461,
-     0.414, 
-     0.516, 
-     0.516]
-} 
-
 # 
 # Team names
 #
@@ -102,3 +48,88 @@ variable "tenant" {
     type = string
     default = "ml100"
 }
+
+#
+# The list of services comes from this dashboard: https://onenr.io/0VjYqNebvj0
+# Make sure to filter for the intended client
+#
+
+variable "tenant_map" {
+    type = map(object({
+       app_string = string
+       latency = number
+    })) 
+    default = {
+       key1 = {
+         app_string = "3pi-tracking-fourkites" 
+         latency = 0.193
+       }
+       key2 = {
+         app_string = "clientexceptions"
+         latency = 0.00208
+       }
+       key3 = {
+         app_string = "driver-microservices" 
+         latency = 0.303
+       }
+       key4 = {
+         app_string = "incidents"
+         latency = 0.148
+       }
+       key5 = {
+         app_string = "linkedroutes" 
+         latency = 0.0208
+       }
+       key6 = {
+         app_string = "macropoint"
+         latency = 2.688
+       }
+       key7 = {
+         app_string = "power-microservices" 
+         latency = 0.42
+       }
+       key8 = {
+         app_string = "saved-filters"
+         latency = 0.0664
+       }
+       key9 = {
+         app_string = "seer" 
+         latency = 0.042
+       }
+       key10 = {
+         app_string = "service-tolerance"
+         latency = 0.00806
+       }
+       key11 = {
+         app_string = "stopevents" 
+         latency = 0.289
+       }
+       key12 = {
+         app_string = "tasks"
+         latency = 0.00186
+       }
+       key13 = {
+         app_string = "timelineevents" 
+         latency = 0.839
+       }
+       key14 = {
+         app_string = "tracking"
+         latency = 0.207
+       }
+       key15 = {
+         app_string = "trackingeta (.NET)" 
+         latency = 0.246
+       }
+       key16 = {
+         app_string = "trailer-microservices"
+         latency = 0.195
+       }
+       key17 = {
+         app_string = "truckertools" 
+         latency = 0.258
+       }
+
+    } /* End of default */
+} 
+
+

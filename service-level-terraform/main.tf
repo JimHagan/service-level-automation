@@ -20,7 +20,20 @@ provider "newrelic" {
   region = "US"        # US or EU (defaults to US)
 }
 
+module "service_levels_module" {
+    for_each = var.tenant_map 
+    source = "./modules/service-level-tf-module"
 
+    m_nr_account_id = var.nr_account_id
+    m_service_level_filter = var.service_level_filter
+    m_team_names = var.team_names
+    m_tenant = var.tenant
+
+    m_app_string = each.value.app_string
+    m_app_latency = each.value.latency
+}
+
+/*
 module "service_levels_module" {
     source = "./modules/service-level-tf-module"
 
@@ -30,5 +43,5 @@ module "service_levels_module" {
     m_service_level_filter = var.service_level_filter
     m_team_names = var.team_names
     m_tenant = var.tenant
-}
+} */
 
