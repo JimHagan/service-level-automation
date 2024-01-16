@@ -1,0 +1,7 @@
+service-level-terraform/.terraform.lock.hcl
+service-level-terraform/secret.tfvars
+service-level-terraform/.terraform/modules/modules.json
+service-level-terraform/.terraform/providers/registry.terraform.io/newrelic/newrelic/3.28.1/darwin_amd64/CHANGELOG.md
+service-level-terraform/.terraform/providers/registry.terraform.io/newrelic/newrelic/3.28.1/darwin_amd64/LICENSE
+service-level-terraform/.terraform/providers/registry.terraform.io/newrelic/newrelic/3.28.1/darwin_amd64/README.md
+service-level-terraform/.terraform/providers/registry.terraform.io/newrelic/newrelic/3.28.1/darwin_amd64/terraform-provider-newrelic_v3.28.1

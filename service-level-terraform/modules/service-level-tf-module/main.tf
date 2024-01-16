@@ -5,15 +5,6 @@
 #
 # The app name is constructed using variables tenant and app_string 
 
-#
-
-#
-# To do: Finish creating module
-# Edit success service level and checking naming conventions match with defaults
-# Edit variables file
-# Test out on TechOps - does it work?
-#
-
 terraform {
   # Require Terraform version 1.0 (recommended)
   required_version = "~> 1.0"
@@ -26,14 +17,6 @@ terraform {
   }
 }
 
-/*
-provider "newrelic" {
-  account_id = var.m_nr_account_id 
-  api_key = var.m_nr_api_key 
-  region = "US"        # US or EU (defaults to US)
-}
-*/
-
 locals {
     app_name = "${var.m_tenant}-prod-${var.m_app_string}"
 }
@@ -44,7 +27,7 @@ data "newrelic_entity" "targetApp" {
   type = "APPLICATION"
 }
 
-# Create service levels
+# Latency service level
 resource "newrelic_service_level" "latencyServiceLevel" {
     guid = data.newrelic_entity.targetApp.guid
     name = "${local.app_name} duration < ${var.m_app_latency}"

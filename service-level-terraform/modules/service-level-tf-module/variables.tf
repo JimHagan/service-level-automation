@@ -1,5 +1,6 @@
 # 
-# Variables required for running this module
+# Variables required for running this module. 
+# Module variables are prefixed with 'm_' for 'module_'. 
 #
 # m_nr_account_id
 # m_app_latency
@@ -7,14 +8,6 @@
 # m_service_level_filter
 # m_team_names
 # m_tenant
-
-/*
-variable "m_nr_api_key" {
-    description = "New Relic user api key"
-    type = string
-    sensitive = true
-}
-*/
 
 #
 # New Relic account id to assign the service level to

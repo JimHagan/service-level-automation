@@ -41,7 +41,7 @@ variable "team_names" {
 }
 
 #
-# Tenant - Use nomenclature in https://onenr.io/0oQDz8G84Ry
+# Tenant - Use nomenclature in https://onenr.io/01wZ7xGyAR6
 #
 variable "tenant" {
     description = "Tenant to create service levels for. Example: ml100"
@@ -50,10 +50,29 @@ variable "tenant" {
 }
 
 #
-# The list of services comes from this dashboard: https://onenr.io/0VjYqNebvj0
+# The list of services comes from this dashboard: https://onenr.io/01wZ7xGyAR6
 # Make sure to filter for the intended client
 #
+# Target response times come from this dashboard: https://onenr.io/07j9yL5qMjO
+# You may need to add widgets to the dashboard. 
+# Only include app strings and timings that apply to the tenant you are running this script for.
+#
 
+/* Test with one service level first */
+variable "tenant_map" {
+    type = map(object({
+       app_string = string
+       latency = number
+    })) 
+    default = {
+       key1 = {
+         app_string = "3pi-tracking-fourkites" 
+         latency = 0.193
+       }
+
+    } /* End of default */
+} 
+/* Full map for ml100
 variable "tenant_map" {
     type = map(object({
        app_string = string
@@ -129,7 +148,7 @@ variable "tenant_map" {
          latency = 0.258
        }
 
-    } /* End of default */
-} 
+    } 
+} */
 
 
