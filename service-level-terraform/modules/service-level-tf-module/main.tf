@@ -37,11 +37,11 @@ resource "newrelic_service_level" "latencyServiceLevel" {
         account_id = var.m_nr_account_id 
         valid_events {
             from = "Transaction"
-            where = "appName = '${local.app_name}' AND (transactionType='Web') ${var.m_service_level_filter}"
+            where = "entityGuid = '${data.newrelic_entity.targetApp.guid}' AND (transactionType='Web') ${var.m_service_level_filter}"
         }
         good_events {
             from = "Transaction"
-            where = "appName = '${local.app_name}' AND (transactionType= 'Web') ${var.m_service_level_filter} AND duration < ${var.m_app_latency}"
+            where = "entityGuid = '${data.newrelic_entity.targetApp.guid}' AND (transactionType= 'Web') ${var.m_service_level_filter} AND duration < ${var.m_app_latency}"
         }
     }
 
@@ -66,11 +66,11 @@ resource "newrelic_service_level" "successServiceLevel" {
         account_id = var.m_nr_account_id
         valid_events {
             from = "Transaction"
-            where = "appName LIKE '${local.app_name}' AND (transactionType='Web') ${var.m_service_level_filter}"
+            where = "entityGuid = '${data.newrelic_entity.targetApp.guid}' ${var.m_service_level_filter}"
         }
-        good_events {
-            from = "Transaction"
-            where = "appName LIKE '${local.app_name}' AND (transactionType= 'Web') ${var.m_service_level_filter} AND error = false"
+        bad_events {
+            from = "TransactionError"
+            where = "entityGuid = '${data.newrelic_entity.targetApp.guid}' ${var.m_service_level_filter} AND error.expected = false"
         }
     }
 
