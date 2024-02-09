@@ -21,7 +21,7 @@ provider "newrelic" {
 }
 
 module "service_levels_module" {
-    for_each = var.tenant_map 
+    for_each = var.service_level_param_map 
     source = "./modules/service-level-tf-module"
 
     m_nr_account_id = var.nr_account_id

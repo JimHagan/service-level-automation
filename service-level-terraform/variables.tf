@@ -28,7 +28,7 @@ variable "nr_account_id" {
 variable "service_level_filter" {
     description = "transactions to include or exclude"
     type = string
-    default = "AND request.uri NOT LIKE '/health%' AND request.uri NOT LIKE '/readiness' AND request.uri NOT LIKE '/liveness'"
+    default = "AND request.uri NOT LIKE '/health%'"
 }
 
 # 
@@ -40,115 +40,23 @@ variable "team_names" {
     default = ["SRE"]
 }
 
-#
-# Tenant - Use nomenclature in https://onenr.io/01wZ7xGyAR6
-#
-variable "tenant" {
-    description = "Tenant to create service levels for. Example: ml100"
-    type = string
-    default = "ml100"
-}
 
-#
-# The list of services comes from this dashboard: https://onenr.io/01wZ7xGyAR6
-# Make sure to filter for the intended client
-#
-# Target response times come from this dashboard: https://onenr.io/07j9yL5qMjO
-# You may need to add widgets to the dashboard. 
-# Only include app strings and timings that apply to the tenant you are running this script for.
-#
-
-/* Test with one service level first */
-variable "tenant_map" {
+variable "service_level_param_map" {
     type = map(object({
        app_string = string
        latency = number
     })) 
     default = {
        key1 = {
-         app_string = "3pi-tracking-fourkites" 
-         latency = 0.193
-       }
-
-    } /* End of default */
-} 
-/* Full map for ml100
-variable "tenant_map" {
-    type = map(object({
-       app_string = string
-       latency = number
-    })) 
-    default = {
-       key1 = {
-         app_string = "3pi-tracking-fourkites" 
-         latency = 0.193
+         app_string = "service_1" 
+         latency = 1.0
        }
        key2 = {
-         app_string = "clientexceptions"
-         latency = 0.00208
-       }
-       key3 = {
-         app_string = "driver-microservices" 
-         latency = 0.303
-       }
-       key4 = {
-         app_string = "incidents"
-         latency = 0.148
-       }
-       key5 = {
-         app_string = "linkedroutes" 
-         latency = 0.0208
-       }
-       key6 = {
-         app_string = "macropoint"
-         latency = 2.688
-       }
-       key7 = {
-         app_string = "power-microservices" 
-         latency = 0.42
-       }
-       key8 = {
-         app_string = "saved-filters"
-         latency = 0.0664
-       }
-       key9 = {
-         app_string = "seer" 
-         latency = 0.042
-       }
-       key10 = {
-         app_string = "service-tolerance"
-         latency = 0.00806
-       }
-       key11 = {
-         app_string = "stopevents" 
-         latency = 0.289
-       }
-       key12 = {
-         app_string = "tasks"
-         latency = 0.00186
-       }
-       key13 = {
-         app_string = "timelineevents" 
-         latency = 0.839
-       }
-       key14 = {
-         app_string = "tracking"
-         latency = 0.207
-       }
-       key15 = {
-         app_string = "trackingeta (.NET)" 
-         latency = 0.246
-       }
-       key16 = {
-         app_string = "trailer-microservices"
-         latency = 0.195
-       }
-       key17 = {
-         app_string = "truckertools" 
-         latency = 0.258
+         app_string = "service_2"
+         latency = 1.0
        }
 
     } 
-} */
+}
 
 

@@ -3,7 +3,7 @@
 # a latency service level with tags
 # a success service level with tags
 #
-# The app name is constructed using variables tenant and app_string 
+
 
 terraform {
   # Require Terraform version 1.0 (recommended)
@@ -18,7 +18,7 @@ terraform {
 }
 
 locals {
-    app_name = "${var.m_tenant}-prod-${var.m_app_string}"
+    app_name = "${var.m_app_string}"
 }
 
 data "newrelic_entity" "targetApp" {
